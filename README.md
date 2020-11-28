@@ -2,6 +2,7 @@
 
 ## 목표
 [Pixelorama](https://github.com/Orama-Interactive/Pixelorama)에서 번역이 미흡한 일본어를 100% 번역할 것
+
 프로젝트 소개, 선정 이유 및 기여 방법은 howto.txt에 서술되어 있습니다.
 
 ## 진행 과정
@@ -13,5 +14,6 @@
 
 ## 참여 인원
 2020088895 신해소진 [@Naserume](https://github.com/Naserume)
+
 총 1명
 
