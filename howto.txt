@@ -1,0 +1,27 @@
+- 프로젝트 소개
+
+Pixelorama(https://github.com/Orama-Interactive/Pixelorama)는 Orama-Interactive 팀 외 약 30명의 contributor가 만든 오픈 소스 스프라이트 편집기 입니다.
+게임 개발용 오픈 소스 엔진인 Godot Engine과 기반 언어인 GDScript로 제작했으며, 
+
+- 프로젝트 선정 이유
+
+그림 편집 툴에 관심이 있어 초기 예시로 제출했던 Pixelorama와 Piskel 중 꾸준한 Commit이 이루어지고 있는 Pixelorama를 선택했습니다. 
+초기에는 코드의 분석을 해보고 issue에 직접 기여하고 싶었으나, 실력이 충분하지 않아 방향을 변경했습니다.
+현재 목표는 번역이 부실한 일본어의 번역을 100% 완료하는 것입니다.
+
+
+- 프로젝트 기여 방법
+
+Pixelorama는 공개 번역 사이트인 crowdin에서 번역을 할 수 있습니다. 
+해당 사이트에서 번역을 제시하면 (https://crowdin.com/project/pixelorama/) 에서 언어별 번역 비율을,
+(https://crowdin.com/project/pixelorama/activity_stream)에서 번역 변경 및 제안 내용을 확인할 수 있습니다.
+어느정도 번역 개선이 이루어지면,  팀의 리드 개발자인 OverloadedOrama가 직접 Pull Request에 번역 변경 내용을 추가합니다.
+
+이런 구조로 인해 직접 commit이나 pull request를 요청하기 어렵습니다. 
+따라서 process 폴더를 새로 만들어 crowdin의 변경 내역
+(https://crowdin.com/project/pixelorama/activity_stream)과 Pixelorama github의 번역 commit
+(https://github.com/Orama-Interactive/Pixelorama/blob/master/Translations/ja_JP.po)을 모두 저장할 것입니다.
+
+crowdin에서 진행하는 번역은 github와 같은 id(naserume)로 진행하며,
+Activity 탭에서 아이디 Naserume를 선택해 번역 참여 정도를 확인할 수 있습니다.
+Crowdin의 번역 변경사항은 스크린샷과 activity stream으로, github에 적용된 번역은 스크린샷과 commit history로 확인할 수 있습니다.
