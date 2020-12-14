@@ -3,7 +3,7 @@ import os
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='!')
-
+chipdir = "./saved"
 
 @bot.event
 async def on_ready():
@@ -29,8 +29,10 @@ async def embed(ctx):
 
 @bot.command()
 async def addChip(ctx,wants=100):
+    if not os.path.isdir(chipdir):
+        os.mkdir(chipdir)
     senderid=ctx.author.id
-    player="player"+str(senderid)
+    player=chipdir+"/player"+str(senderid)
     try:
         with open(player+".txt","r") as playerchip:
             chip=int(playerchip.read())
