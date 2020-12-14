@@ -1,17 +1,19 @@
 import discord
+from discord.ext import commands
 
-client = discord.Client()
+bot = commands.Bot(command_prefix='!')
 
-@client.event
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print('We have logged in as {0.user}'.format(bot))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game('카지노 일'))
 
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
 
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
-client.run('my token')
+bot.run('my token')
