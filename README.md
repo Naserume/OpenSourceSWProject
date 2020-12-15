@@ -10,6 +10,12 @@
 3. 목표로 하는 카지노봇 제작
 4. 테스트, 기록
 
+## 봇 사용법
+디스코드 봇 추가하기
+https://discord.com/api/oauth2/authorize?client_id=787596915004801024&permissions=0&scope=bot
+
+!help 명령어로 명령어 확인
+
 ## 참여 인원
 2020088895 신해소진 [@Naserume](https://github.com/Naserume)
 
