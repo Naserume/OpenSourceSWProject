@@ -44,26 +44,30 @@ def chipchange(ctx,want):
     if not os.path.isdir(chipdir):
         os.mkdir(chipdir)
     senderid=ctx.author.id
-    player = chipdir+"/player"+str(senderid)
+    player = chipdir+"/player"+str(senderid)+".txt"
     try:
-        with open(player+".txt","r") as playerchip:
-            chip=int(playerchip.read())
+        with open(player,"r") as playerchip:
+            chipline=playerchip.readlines()
+            chip=int(chipline[0])
             print(chip)
-        with open(player+".txt","w") as playerchip:
+        with open(player,"w") as playerchip:
             chip = chip+want
             print(chip)
-            playerchip.write(str(chip))
+            chipline[0]=str(chip)+'\n'
+            playerchip.writelines(chipline)
     except FileNotFoundError:
-        with open(player+".txt","w") as playerchip:
-            playerchip.write("100")
+        with open(player,"w") as playerchip:
+            playerchip.write("100\n0\n0\n0\n")
 
 @bot.command(aliases=["mychip"])
 async def myChip(ctx):
     chipchange(ctx,0)
     senderid=ctx.author.id
-    player = chipdir+"/player"+str(senderid)
-    with open(player+".txt","r") as playerchip:
-        await ctx.channel.send(ctx.author.name+"씨의 칩은 "+playerchip.read()+"개")
+    player = chipdir+"/player"+str(senderid)+".txt"
+    with open(player,"r") as playerchip:
+        chipline=playerchip.readlines()
+        chips=chipline[0]
+        await ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개")
 
 @bot.command(aliases=["addchip"])
 async def addChip(ctx,wants=100):
@@ -71,9 +75,9 @@ async def addChip(ctx,wants=100):
     senderid=ctx.author.id
     player = chipdir+"/player"+str(senderid)
     with open(player+".txt","r") as playerchip:
-        await ctx.channel.send(ctx.author.name+"씨의 칩은 "+playerchip.read()+"개")
-
-
+        chipline=playerchip.readlines()
+        chips=chipline[0]
+        await ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개")
 
 @bot.command(aliases=["가위바위보","rps"])
 async def RockPaperSissors(ctx,wants=1):
