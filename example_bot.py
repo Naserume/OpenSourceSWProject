@@ -40,7 +40,7 @@ async def Help(ctx):
     embed.set_footer(text="footer는 아직 어떻게 쓸지 모른다.")
     await ctx.channel.send(embed=embed)
 
-def chipchange(ctx,want):
+def playerchange(ctx,want,locate):
     if not os.path.isdir(chipdir):
         os.mkdir(chipdir)
     senderid=ctx.author.id
@@ -48,12 +48,12 @@ def chipchange(ctx,want):
     try:
         with open(player,"r") as playerchip:
             chipline=playerchip.readlines()
-            chip=int(chipline[0])
-            print(chip)
+            chip=int(chipline[locate])
+            #print(chip)
         with open(player,"w") as playerchip:
             chip = chip+want
             print(chip)
-            chipline[0]=str(chip)+'\n'
+            chipline[locate]=str(chip)+'\n'
             playerchip.writelines(chipline)
     except FileNotFoundError:
         with open(player,"w") as playerchip:
@@ -61,7 +61,7 @@ def chipchange(ctx,want):
 
 @bot.command(aliases=["mychip"])
 async def myChip(ctx):
-    chipchange(ctx,0)
+    playerchange(ctx,0,0)
     senderid=ctx.author.id
     player = chipdir+"/player"+str(senderid)+".txt"
     with open(player,"r") as playerchip:
@@ -71,7 +71,7 @@ async def myChip(ctx):
 
 @bot.command(aliases=["addchip"])
 async def addChip(ctx,wants=100):
-    chipchange(ctx,wants)
+    playerchange(ctx,wants,0)
     senderid=ctx.author.id
     player = chipdir+"/player"+str(senderid)
     with open(player+".txt","r") as playerchip:
@@ -81,6 +81,16 @@ async def addChip(ctx,wants=100):
 
 @bot.command(aliases=["가위바위보","rps"])
 async def RockPaperSissors(ctx,wants=1):
+    senderid=ctx.author.id
+    player = chipdir+"/player"+str(senderid)
+    with open(player+".txt","r") as playerchip:
+        chipline=playerchip.readlines()
+        chips=chipline[0]
+        if(wants<1 or int(chips)-wants<0):
+            answer = ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다.")
+            embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
+            await ctx.channel.send(embed=embed)
+            return
     rps = ["가위","바위","보"]
     embed = discord.Embed(title="가위바위보",description=ctx.author.name+"님\n가위, 바위, 보 중 하나를 5초 안에 내주세요!", color=0x00aaaa)
     senderid=ctx.author.id
@@ -103,23 +113,29 @@ async def RockPaperSissors(ctx,wants=1):
         if bot_rps == user_rps:
             answer = "딜러인 저는 " + bot_rps + "를 냈고, "+ctx.author.name+"씨는 " + user_rps + "를 내셨습니다.\n" + "비겼습니다.\n"
             wants=0
-        elif (bot_rps == "가위" and user_rps == "바위") or (bot_rps == "보" and user_rps == "가위") or (bot_rps == "!바위" and user_rps == "!보"):
+            result=2
+        elif (bot_rps == "가위" and user_rps == "바위") or (bot_rps == "보" and user_rps == "가위") or (bot_rps == "바위" and user_rps == "보"):
             answer = "딜러인 저는 " + bot_rps + "를 냈고, "+ctx.author.name+"씨는 " + user_rps + "를 내셨습니다.\n" + "승리하셨습니다. 칩 "+str(wants)+"개를 획득하셨습니다.\n"
-            
-        elif (bot_rps == "바위" and user_rps == "가위") or (bot_rps == "가위" and user_rps == "보") or (bot_rps == "!보" and user_rps == "!바위"):
+            result=1
+        elif (bot_rps == "바위" and user_rps == "가위") or (bot_rps == "가위" and user_rps == "보") or (bot_rps == "보" and user_rps == "바위"):
             answer = "딜러인 저는 " + bot_rps + "를 냈고, "+ctx.author.name+"씨는 " + user_rps + "를 내셨습니다.\n" + "패배하셨습니다. 칩 "+str(wants)+"개를 잃으셨습니다.\n"
             wants=-wants
+            result=3
         else:
             embed = discord.Embed(title="가위바위보",description="가위, 바위, 보 중에서만 내셔야 합니다.", color=0x00aaaa)
             await ctx.channel.send(embed=embed)
             return
-        senderid=ctx.author.id
-        player = chipdir+"/player"+str(senderid)
-        with open(player+".txt","r") as playerchip:
-            chipchange(ctx,wants)
-            answer = answer + "\n"+ctx.author.name+"씨의 칩은 "+playerchip.read()+"개"
         embed = discord.Embed(title="가위바위보",description=answer, color=0x00aaaa)
         await ctx.channel.send(embed=embed)
+        with open(player+".txt","r") as playerchip:
+            playerchange(ctx,wants,0)
+            try:
+                playerchange(ctx,1,result)
+            except:
+                pass
+            chipline=playerchip.readlines()
+            chips=chipline[0]
+            await ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개")
         return
 
 bot.run('my token')
