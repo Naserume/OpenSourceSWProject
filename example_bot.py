@@ -34,11 +34,11 @@ async def embed(ctx):
 async def Help(ctx):
     embed=discord.Embed(title="명령어 목록", description="모든 명령어는 !(명령어) 형태", color=0x00aaaa)
     embed.set_author(name="카지노 봇")
-    embed.add_field(name="!help", value="명령어 목록을 알려줍니다", inline=False)
-    embed.add_field(name="!addChip (숫자)", value="(숫자)만큼 칩을 추가합니다. 값이 없으면 100개", inline=False)
-    embed.add_field(name="!가위바위보 (숫자)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다. 기본값은 1개", inline=False)
+    embed.add_field(name="!help", value="명령어 목록을 알려줍니다", inline=False)    
     embed.add_field(name="!myChip", value="플레이어의 칩 수를 보여줍니다.", inline=False)
-    embed.set_footer(text="footer는 아직 어떻게 쓸지 모른다.")
+    embed.add_field(name="!addChip (숫자)", value="(숫자)만큼 칩을 추가합니다. 값이 없으면 100개", inline=False)
+    embed.add_field(name="!가위바위보 (숫자)\n!rps (숫자) \n!RockPaperSissors (숫자)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다. 기본값은 1개", inline=False)
+    embed.add_field(name="!블랙잭 (숫자)\n!BlackJack (숫자)\n!blackjack (숫자)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~1000개 사이이며, 기본값은 10입니다.", inline=False)
     await ctx.channel.send(embed=embed)
 
 def playerchange(ctx,want,locate):
@@ -58,7 +58,7 @@ def playerchange(ctx,want,locate):
             playerchip.writelines(chipline)
     except FileNotFoundError:
         with open(player,"w") as playerchip:
-            playerchip.write("100\n0\n0\n0\n")
+            playerchip.write("100\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n")
 
 @bot.command(aliases=["mychip"])
 async def myChip(ctx):
@@ -120,22 +120,27 @@ async def RockPaperSissors(ctx,wants=1):
         if bot_rps == user_rps:
             answer = "딜러인 저는 " + bot_rps + "를 냈고, "+ctx.author.name+"씨는 " + user_rps + "를 내셨습니다.\n" + "비겼습니다.\n"
             wants=0
-            result=2
+            result=1
         elif (bot_rps == "가위" and user_rps == "바위") or (bot_rps == "보" and user_rps == "가위") or (bot_rps == "바위" and user_rps == "보"):
             answer = "딜러인 저는 " + bot_rps + "를 냈고, "+ctx.author.name+"씨는 " + user_rps + "를 내셨습니다.\n" + "승리하셨습니다. 칩 "+str(wants)+"개를 획득하셨습니다.\n"
-            result=1
+            result=0
         elif (bot_rps == "바위" and user_rps == "가위") or (bot_rps == "가위" and user_rps == "보") or (bot_rps == "보" and user_rps == "바위"):
             answer = "딜러인 저는 " + bot_rps + "를 냈고, "+ctx.author.name+"씨는 " + user_rps + "를 내셨습니다.\n" + "패배하셨습니다. 칩 "+str(wants)+"개를 잃으셨습니다.\n"
             wants=-wants
-            result=3
+            result=2
         else:
             embed = discord.Embed(title="가위바위보",description="가위, 바위, 보 중에서만 내셔야 합니다.", color=0x00aaaa)
             await ctx.channel.send(embed=embed)
             return
         embed = discord.Embed(title="가위바위보",description=answer, color=0x00aaaa)
         playerchange(ctx,wants,0)
+        if wants>0:
+            playerchange(ctx,wants,1)
+        else:
+            playerchange(ctx,-wants,2)
+        playerchange(ctx,1,result+3)
+        playerchange(ctx,1,result+6)
         await ctx.channel.send(embed=embed)
-        playerchange(ctx,1,result)
         with open(player+".txt","r") as playerchip:
             chipline=playerchip.readlines()
             chips=chipline[0]
@@ -162,9 +167,6 @@ async def BlackJack(ctx,wants=10):
                 embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
                 await ctx.channel.send(embed=embed)
                 return
-            playerchange(ctx,-wants,0)
-            chips=int(chips)-wants
-            await ctx.channel.send(ctx.author.name+"씨의 남은 칩은 "+str(chips)+"개 입니다.")
         dealer = []
         player = []
         card, deck = hit(deck)
@@ -215,30 +217,35 @@ async def BlackJack(ctx,wants=10):
         await msg1.delete()
         if score_player == 0:
             answer = answer + "버스트로 패배하셨습니다."
-            earn=0
-            result=3
+            earn=-wants
+            result=2
         elif score_player == 9999 and score_dealer < score_player:
             answer = answer + "블랙잭! 승리하셨습니다!"
-            earn = wants*2+wants//2
-            result=1
+            earn = wants+wants//2
+            result=0
         elif score_dealer == 0:
             answer = answer + "딜러 버스트로 승리하셨습니다!"
-            earn=wants*2
-            result=1
+            earn= wants
+            result=0
         elif score_dealer == score_player:
             answer = answer + "비겼습니다"
-            earn=wants
-            result=2
+            earn=0
+            result=1
         elif score_dealer < score_player:
             answer = answer + "승리하셨습니다!"
-            earn=wants*2
-            result=1
+            earn=wants
+            result=0
         else:
             answer = answer + "패배하셨습니다."
             earn=0
-            result=3
+            result=2
         playerchange(ctx,earn,0)
-        playerchange(ctx,1,result)
+        if earn>0:
+            playerchange(ctx,earn,1)
+        else:
+            playerchange(ctx,-earn,2)
+        playerchange(ctx,1,result+3)
+        playerchange(ctx,1,result+9)
         with open(sendername+".txt","r") as playerchip:
             chipline=playerchip.readlines()
             chips=chipline[0]
