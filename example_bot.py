@@ -144,7 +144,8 @@ async def RockPaperSissors(ctx,wants=1):
         with open(player+".txt","r") as playerchip:
             chipline=playerchip.readlines()
             chips=chipline[0]
-            await ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개")
+            #await ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개")
+            await ctx.channel.send("{} 씨가 소지하고 있는 칩은 총 **{}**개 입나다!".format(ctx.author.name, chips.rstrip('\n')))
         return
 
 @bot.command(aliases=["블랙잭","blackjack"])
@@ -237,7 +238,8 @@ async def BlackJack(ctx,wants=10):
             result=0
         else:
             answer = answer + "패배하셨습니다."
-            earn=0
+            #earn=0
+            earn=-wants
             result=2
         playerchange(ctx,earn,0)
         if earn>0:
