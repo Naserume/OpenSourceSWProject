@@ -30,15 +30,16 @@ async def embed(ctx):
     embed.set_footer(text="이것은 footer의 값입니다.")
     await ctx.channel.send(embed=embed)
 
-@bot.command(aliases=["help"])
+@bot.command(aliases=["help","도움말"])
 async def Help(ctx):
-    embed=discord.Embed(title="명령어 목록", description="모든 명령어는 !(명령어) 형태", color=0x00aaaa)
+    embed=discord.Embed(title="명령어 목록", description="모든 명령어는 !명령어 형태로, (괄호)안 내용은 필수가 아닙니다.", color=0x00aaaa)
     embed.set_author(name="카지노 봇")
-    embed.add_field(name="!help", value="명령어 목록을 알려줍니다", inline=False)    
-    embed.add_field(name="!myChip", value="플레이어의 칩 수를 보여줍니다.", inline=False)
-    embed.add_field(name="!addChip (숫자)", value="(숫자)만큼 칩을 추가합니다. 값이 없으면 100개", inline=False)
-    embed.add_field(name="!가위바위보 (숫자)\n!rps (숫자) \n!RockPaperSissors (숫자)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다. 기본값은 1개", inline=False)
-    embed.add_field(name="!블랙잭 (숫자)\n!BlackJack (숫자)\n!blackjack (숫자)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~1000개 사이이며, 기본값은 10입니다.", inline=False)
+    embed.add_field(name="!help\n!도움말", value="명령어 목록을 알려줍니다", inline=False)    
+    embed.add_field(name="!myChip\n!mychip\n!chip", value="플레이어의 칩 수를 보여줍니다.", inline=False)
+    embed.add_field(name="!addChip (칩 수)\n!addchip (칩 수)\n!add (칩 수)", value="(칩 수)만큼 칩을 추가합니다. 기본값은 100입니다.", inline=False)
+    embed.add_field(name="!가위바위보 (칩 수)\n!rps (칩 수) \n!RockPaperSissors (칩 수)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다. 기본값은 1입니다.", inline=False)
+    embed.add_field(name="!블랙잭 (칩 수)\n!BlackJack (칩 수)\n!blackjack (칩 수)\n!21 (칩 수)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~1000개 사이이며, 기본값은 10입니다.", inline=False)
+    embed.add_field(name="!SlotMachine (칩 수)\n!slot (칩 수)\n!슬롯머신 (칩 수)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~500개 사이이며, 기본값은 10입니다.", inline=False)
     await ctx.channel.send(embed=embed)
 
 def playerchange(ctx,want,locate):
@@ -58,9 +59,9 @@ def playerchange(ctx,want,locate):
             playerchip.writelines(chipline)
     except FileNotFoundError:
         with open(player,"w") as playerchip:
-            playerchip.write("100\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n")
+            playerchip.write("100\n"+"0\n"*14)
 
-@bot.command(aliases=["mychip"])
+@bot.command(aliases=["mychip","chip"])
 async def myChip(ctx):
     playerchange(ctx,0,0)
     senderid=ctx.author.id
@@ -76,7 +77,7 @@ async def myChip(ctx):
         #    await ctx.send(f"{ctx.message.author.mention}님 서버 이름 클릭 - 개인정보 보호 설정 - 서버 멤버가 보내는 개인 메시지 허용해주세요.")
         #    요게 개인에게 직접 메시지 보내는 법이다.
 
-@bot.command(aliases=["addchip"])
+@bot.command(aliases=["addchip","add"])
 async def addChip(ctx,wants=100):
     playerchange(ctx,wants,0)
     senderid=ctx.author.id
@@ -94,14 +95,12 @@ async def RockPaperSissors(ctx,wants=1):
         chipline=playerchip.readlines()
         chips=chipline[0]
         if(wants<1 or int(chips)-wants<0):
-            answer = ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다.")
+            answer = ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다."
             embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
             await ctx.channel.send(embed=embed)
             return
-    #가위 바위 보 이외의 초성을 입력할 수 있으면 좋겠습니다. (ㄱㅇ.ㅂㅇ.ㅂ같은)
     rps = ["가위","바위","보"]
-    embed = discord.Embed(title="가위바위보",description=ctx.author.name+"님\n가위, 바위, 보 중 하나를 5초 안에 내주세요!", color=0x00aaaa)
-    senderid=ctx.author.id
+    embed = discord.Embed(title="가위바위보",description=ctx.author.name+"님\n가위, 바위, 보 중 하나를 5초 안에 내주세요!\nㄱㅇ, ㅂㅇ, ㅂ 혹은 s, r, p의 축약형도 가능합니다.", color=0x00aaaa)
     channel = ctx.channel
     msg1 =await ctx.channel.send(embed=embed)
     def checksame(newtext):
@@ -117,6 +116,12 @@ async def RockPaperSissors(ctx,wants=1):
         await msg1.delete()
         bot_rps = str(random.choice(rps))
         user_rps  = str(msg2.content)
+        if(user_rps=="ㄱㅇ" or user_rps=="s"):
+            user_rps = "가위"
+        elif(user_rps=="ㅂㅇ" or user_rps=="r"):
+            user_rps = "바위"
+        elif(user_rps=="ㅂ" or user_rps=="p"):
+            user_rps = "보"
         answer = ""
         if bot_rps == user_rps:
             answer = "딜러인 저는 " + bot_rps + "를 냈고, "+ctx.author.name+"씨는 " + user_rps + "를 내셨습니다.\n" + "비겼습니다.\n"
@@ -130,7 +135,7 @@ async def RockPaperSissors(ctx,wants=1):
             wants=-wants
             result=2
         else:
-            embed = discord.Embed(title="가위바위보",description="가위, 바위, 보 중에서만 내셔야 합니다.", color=0x00aaaa)
+            embed = discord.Embed(title="가위바위보",description="가위, 바위, 보 중에서만 내셔야 합니다.\nㄱㅇ, ㅂㅇ, ㅂ 혹은 s, r, p의 축약형도 가능합니다", color=0x00aaaa)
             await ctx.channel.send(embed=embed)
             return
         embed = discord.Embed(title="가위바위보",description=answer, color=0x00aaaa)
@@ -145,11 +150,10 @@ async def RockPaperSissors(ctx,wants=1):
         with open(player+".txt","r") as playerchip:
             chipline=playerchip.readlines()
             chips=chipline[0]
-            #await ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개")
-            await ctx.channel.send("{} 씨가 소지하고 있는 칩은 총 **{}**개 입나다!".format(ctx.author.name, chips.rstrip('\n')))
+            await ctx.channel.send("{} 씨가 소지하고 있는 칩은 총 **{}**개 입니다!".format(ctx.author.name, chips.rstrip('\n')))
         return
 
-@bot.command(aliases=["블랙잭","blackjack"])
+@bot.command(aliases=["블랙잭","blackjack","21"])
 async def BlackJack(ctx,wants=10):
     def checksame(newtext):
         return newtext.author == ctx.author and newtext.channel == channel
@@ -165,7 +169,7 @@ async def BlackJack(ctx,wants=10):
                 await ctx.channel.send(embed=embed)
                 return
             if(wants<1 or int(chips)-wants<0):
-                answer = ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다.")
+                answer = ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다."
                 embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
                 await ctx.channel.send(embed=embed)
                 return
@@ -239,7 +243,6 @@ async def BlackJack(ctx,wants=10):
             result=0
         else:
             answer = answer + "패배하셨습니다."
-            #earn=0
             earn=-wants
             result=2
         playerchange(ctx,earn,0)
@@ -266,6 +269,109 @@ async def BlackJack(ctx,wants=10):
             return
         if msg2.content=="N" or msg2.content=="n":
             break
+    return
+
+@bot.command(aliases=["슬롯머신","slot"])
+async def SlotMachine(ctx,wants=10):
+    def checksame(newtext):
+        return newtext.author == ctx.author and newtext.channel == channel
+    senderid=ctx.author.id
+    sendername = chipdir+"/player"+str(senderid)
+    channel = ctx.channel
+    with open(sendername+".txt","r+") as playerchip:
+        chipline=playerchip.readlines()
+        chips=chipline[0]
+        if(wants<10 or wants>500):
+            embed = discord.Embed(title="슬롯머신 SlotMachine",description="\n칩은 10개~500개 사이로 베팅해주세요.", color=0x00aaaa)
+            await ctx.channel.send(embed=embed)
+            return
+        if(wants<1 or int(chips)-wants<0):
+            answer = ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다."
+            embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
+            await ctx.channel.send(embed=embed)
+            return
+    while(True):
+        slot1=[":grapes:",":slot_machine:",":tangerine:",":grapes:",":slot_machine:",":watermelon:",":grapes:",":bell:",":grapes:",":seven:",":grapes:",":cherries:",":grapes:",":tangerine:",":watermelon:",":tangerine:",":grapes:",":slot_machine:",":tangerine:",":tangerine:",":cherries:"]
+        slot2=[":slot_machine:",":bell:",":cherries:",":watermelon:",":tangerine:",":grapes:",":bell:",":tangerine:",":bell:",":seven:",":watermelon:",":cherries:",":grapes:",":cherries:",":grapes:",":tangerine:",":slot_machine:",":bell:",":tangerine:",":cherries:",":bell:",":cherries:",":tangerine:",":cherries:"]
+        slot3=[":grapes:",":slot_machine:",":bell:",":watermelon:",":bell:",":bell:",":tangerine:",":lemon:",":grapes:",":bell:",":tangerine:",":bell:",":lemon:",":bell:",":tangerine:",":lemon:",":bell:",":seven:",":bell:",":grapes:",":watermelon:",":tangerine:",":lemon:"]
+        num1 = random.randint(0,20) 
+        num2 = random.randint(0,23) 
+        num3 = random.randint(0,22)
+        bedang = -1
+        resu = [slot1[num1%21],slot1[(num1+1)%21],slot1[(num1+2)%21],slot2[num2%24],slot2[(num2+1)%24],slot2[(num2+2)%24],slot3[num3%23],slot3[(num3+1)%23],slot3[(num3+2)%23]]
+        if(resu[1]==resu[4] and resu[4]==resu[7]):
+            if(resu[1]==":seven:"):
+                bedang = 201
+            elif(resu[1]==":slot_machine:"):
+                bedang = 101
+            elif(resu[1]==":watermelon:"):
+                bedang = 101
+            elif(resu[1]==":bell:"):
+                bedang = 19
+            elif(resu[1]==":grapes:"):
+                bedang = 14
+            elif(resu[1]==":tangerine:"):
+                bedang = 10
+        elif(resu[1]==resu[4] and resu[7]=="slot_machine"):
+            if(resu[1]==":watermelon:"):
+                bedang = 101
+            elif(resu[1]==":bell:"):
+                bedang = 19
+            elif(resu[1]==":grapes:"):
+                bedang = 15
+            elif(resu[1]==":tangerine:"):
+                bedang = 11
+        elif(resu[1]==":cherries:"):
+            if(resu[4]==":cherries:"):
+                bedang = 5
+            else:
+                bedang = 3
+        result = "7777777777 \n"+resu[0]+" - "+resu[3]+" - "+resu[6]+"\n"+resu[1]+" - "+resu[4]+" - "+resu[7]+" <-\n"+resu[2]+" - "+resu[5]+" - "+resu[8]+"\n7777777777 \n"
+        if(bedang==201):
+            winlose = "\n[ - - JACKPOT! - - ]"
+            ton=0
+            playerchange(ctx,wants*bedang,1)
+        elif(bedang>0):
+            winlose = "\n[ - - YOU WON! - - ]"
+            ton=0
+            playerchange(ctx,wants*bedang,1)
+        else:
+            winlose = "\n[ - - YOU LOSE - - ]"
+            ton=2
+            playerchange(ctx,-wants*bedang,2)
+        playerchange(ctx,wants*bedang,0)
+        playerchange(ctx,1,ton+3)
+        playerchange(ctx,1,ton+12)
+        with open(sendername+".txt","r") as playerchip:
+            chipline=playerchip.readlines()
+            chips=chipline[0]
+        embed = discord.Embed(title="SlotMachine 슬롯머신", description=result+winlose, color=0x00aaaa)
+        await ctx.channel.send(embed=embed)
+        await ctx.channel.send("{} 씨가 소지하고 있는 칩은 총 **{}**개 입니다!".format(ctx.author.name, chips.rstrip('\n')))
+        await ctx.channel.send("다시 하시고 싶으시면 Y(혹은 y)를, 아니면 N(혹은 n)을 입력해주세요.\n 제한시간: 10초")
+        try:
+            msg2 = await bot.wait_for('message', timeout=10.0, check=checksame)
+            while(msg2.content!="Y" and msg2.content!="N" and msg2.content!="y" and msg2.content!="n"):
+                await ctx.channel.send("다시 하시고 싶으시면 Y(혹은 y)를, 아니면 N(혹은 n)을 입력해주세요.\n 제한시간: 10초")
+                msg2 = await bot.wait_for('message', timeout=40.0, check=checksame)
+        except asyncio.TimeoutError:
+            embed = discord.Embed(title="슬롯머신",description="10초가 다 지나 게임을 종료합니다.", color=0x00aaaa)
+            await ctx.channel.send(embed=embed)
+            return
+        if msg2.content=="N" or msg2.content=="n":
+            break
+        with open(sendername+".txt","r+") as playerchip:
+            chipline=playerchip.readlines()
+            chips=chipline[0]
+            if(wants<10 or wants>500):
+                embed = discord.Embed(title="슬롯머신 SlotMachine",description="\n칩은 10개~500개 사이로 베팅해주세요.", color=0x00aaaa)
+                await ctx.channel.send(embed=embed)
+                return
+            if(wants<1 or int(chips)-wants<0):
+                answer = ctx.channel.send(ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다.")
+                embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
+                await ctx.channel.send(embed=embed)
+                return
     return
 
 bot.run('my token')
