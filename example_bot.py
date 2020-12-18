@@ -98,6 +98,7 @@ async def RockPaperSissors(ctx,wants=1):
             embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
             await ctx.channel.send(embed=embed)
             return
+    #가위 바위 보 이외의 초성을 입력할 수 있으면 좋겠습니다. (ㄱㅇ.ㅂㅇ.ㅂ같은)
     rps = ["가위","바위","보"]
     embed = discord.Embed(title="가위바위보",description=ctx.author.name+"님\n가위, 바위, 보 중 하나를 5초 안에 내주세요!", color=0x00aaaa)
     senderid=ctx.author.id
