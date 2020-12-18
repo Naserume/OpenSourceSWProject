@@ -14,33 +14,126 @@ async def on_ready():
     print("Discord bot ID is "+str(bot.user.id))
     await bot.change_presence(status=discord.Status.online, activity=discord.Game('!help 카지노 일'))
 
-@bot.command(aliases=["Hello","hello!","Hello!","hi","Hi","hi!","Hi!"])
-async def hello(ctx):
-    
-    await ctx.channel.send("Hello!")
-
-@bot.command()
-async def embed(ctx):
-    embed=discord.Embed(title="Embed", description="Embed 내용.", color=0x00aaaa)
-    embed.set_author(name="작성자의 이름")
-    embed.add_field(name="이것은 field1입니다.", value="이것은 field1 값입니다.", inline=False)
-    embed.add_field(name="이것은 field2입니다.", value="이것은 field2 값입니다.", inline=False)
-    embed.add_field(name="이것은 field3입니다.", value="이것은 field3 값입니다.", inline=False)
-    embed.add_field(name="이것은 field4입니다.", value="이것은 field4 값입니다.", inline=False)
-    embed.set_footer(text="이것은 footer의 값입니다.")
-    await ctx.channel.send(embed=embed)
+@bot.command(aliases=["myprofile","mydata","me"])
+async def  myProfile(ctx,howmuch="short"):
+    playerchange(ctx,0,0)
+    senderid=ctx.author.id
+    player = chipdir+"/player"+str(senderid)+".txt"
+    if(howmuch=="all"):
+        with open(player,"r") as playerchip:
+            chipline=playerchip.readlines()
+            chips=int(chipline[0])
+            wonchips=int(chipline[1])
+            lostchips=int(chipline[2])
+            totwin=int(chipline[3])
+            totdraw=int(chipline[4])
+            totlose=int(chipline[5])
+            rpswin=int(chipline[6])
+            rpsdraw=int(chipline[7])
+            rpslose=int(chipline[8])
+            jackwin=int(chipline[9])
+            jackdraw=int(chipline[10])
+            jacklose=int(chipline[11])
+            slotwin=int(chipline[12])
+            slotdraw=int(chipline[13])
+            slotlose=int(chipline[14])
+            bacwin=int(chipline[15])
+            bacdraw=int(chipline[16])
+            baclose=int(chipline[17])
+        embed = discord.Embed(title="**"+str(ctx.author)+"**", description="", color=0x009900)
+        embed.add_field(name="현재 칩 수", value="**{}**".format(chips), inline=False)
+        embed.add_field(name="얻거나 잃은 칩 수", value="{}개의 칩을 따고 {}개의 칩을 잃음".format(wonchips,lostchips), inline=False)
+        embed.add_field(name="전체 전적", value="{}승 {}패 {}무".format(totwin,totlose,totdraw), inline=False)
+        if(totwin+totlose+totdraw==0):
+            embed.add_field(name="전체 승률", value="아직 플레이한 게임이 없습니다.", inline=False)
+        else:
+            embed.add_field(name="전체 승률", value="{0:5.2f}%".format(100*totwin/(totwin+totlose+totdraw)), inline=False)
+        embed.add_field(name="가위바위보 전적", value="{}승 {}패 {}무".format(rpswin,rpslose,rpsdraw), inline=False)
+        if(rpswin+rpslose+rpsdraw==0):
+            embed.add_field(name="가위바위보 승률", value="아직 플레이한 게임이 없습니다.", inline=False)
+        else:
+            embed.add_field(name="가위바위보 승률", value="{0:5.2f}%".format(100*rpswin/(rpswin+rpslose+rpsdraw)), inline=False)
+        embed.add_field(name="블랙잭 전적", value="{}승 {}패 {}무".format(jackwin,jacklose,jackdraw), inline=False)
+        if(jackwin+jacklose+jackdraw==0):
+            embed.add_field(name="블랙잭 승률", value="아직 플레이한 게임이 없습니다.", inline=False)
+        else:
+            embed.add_field(name="블랙잭 승률", value="{0:5.2f}%".format(100*jackwin/(jackwin+jacklose+jackdraw)), inline=False)
+        embed.add_field(name="슬롯머신 전적", value="{}승 {}패 {}무".format(slotwin,slotlose,slotdraw), inline=False)
+        if(slotwin+slotlose+slotdraw==0):
+            embed.add_field(name="슬롯머신 승률", value="아직 플레이한 게임이 없습니다.", inline=False)
+        else:
+            embed.add_field(name="슬롯머신 승률", value="{0:5.2f}%".format(100*slotwin/(slotwin+slotlose+slotdraw)), inline=False)
+        embed.add_field(name="바카라 전적", value="{}승 {}패 {}무".format(bacwin,baclose,bacdraw), inline=False)
+        if(bacwin+baclose+bacdraw==0):
+            embed.add_field(name="바카라 승률", value="아직 플레이한 게임이 없습니다.", inline=False)
+        else:
+            embed.add_field(name="바카라 승률", value="{0:5.2f}%".format(100*bacwin/(bacwin+baclose+bacdraw)), inline=False)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        await ctx.channel.send(embed=embed)
+    else:
+        with open(player,"r") as playerchip:
+            chipline=playerchip.readlines()
+            chips=int(chipline[0])
+            wonchips=int(chipline[1])
+            lostchips=int(chipline[2])
+            totwin=int(chipline[3])
+            totdraw=int(chipline[4])
+            totlose=int(chipline[5])
+        embed = discord.Embed(title="**"+str(ctx.author)+"**", description="", color=0x009900)
+        embed.add_field(name="현재 칩 수", value="**{}**".format(chips), inline=False)
+        embed.add_field(name="얻거나 잃은 칩 수", value="{}개의 칩을 따고 {}개의 칩을 잃음".format(wonchips,lostchips), inline=False)
+        embed.add_field(name="전적", value="{}승 {}패 {}무".format(totwin,totlose,totdraw), inline=False)
+        if(totwin+totlose+totdraw==0):
+            embed.add_field(name="승률", value="아직 플레이한 게임이 없습니다.", inline=False)
+        else:
+            embed.add_field(name="승률", value="{}% \n자세한 정보는 !me all".format(100*totwin/(totwin+totlose+totdraw)), inline=False)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        await ctx.channel.send(embed=embed)
 
 @bot.command(aliases=["help","도움말"])
-async def Help(ctx):
-    embed=discord.Embed(title="명령어 목록", description="모든 명령어는 !명령어 형태로, (괄호)안 내용은 필수가 아닙니다.", color=0x00aaaa)
-    embed.set_author(name="카지노 봇")
-    embed.add_field(name="!help\n!도움말", value="명령어 목록을 알려줍니다", inline=False)    
-    embed.add_field(name="!myChip\n!mychip\n!chip", value="플레이어의 칩 수를 보여줍니다.", inline=False)
-    embed.add_field(name="!addChip (칩 수)\n!addchip (칩 수)\n!add (칩 수)", value="(칩 수)만큼 칩을 추가합니다. 기본값은 100입니다.", inline=False)
-    embed.add_field(name="!가위바위보 (칩 수)\n!rps (칩 수) \n!RockPaperSissors (칩 수)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다. 기본값은 1입니다.", inline=False)
-    embed.add_field(name="!블랙잭 (칩 수)\n!BlackJack (칩 수)\n!blackjack (칩 수)\n!21 (칩 수)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~1000개 사이이며, 기본값은 10입니다.", inline=False)
-    embed.add_field(name="!SlotMachine (칩 수)\n!slot (칩 수)\n!슬롯머신 (칩 수)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~500개 사이이며, 기본값은 10입니다.", inline=False)
-    await ctx.channel.send(embed=embed)
+async def Help(ctx,myung="all"):
+    if(myung=="all" or myung=="help" or myung=="도움말" or myung=="Help"):
+        embed=discord.Embed(title="명령어 목록", description="모든 명령어는 !명령어 형태로, (괄호)안 내용은 필수가 아닙니다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        embed.add_field(name="!help\n!도움말", value="명령어 목록을 알려줍니다. !help (명령어)로 특정 명령어나 게임의 자세한 정보를 알 수 있습니다.", inline=False)
+        embed.add_field(name="!myProfile\n!myprofile\n!mydata\n!me", value="플레이어 본인의 정보를 보여줍니다.", inline=False)
+        embed.add_field(name="!myChip\n!mychip\n!chip", value="플레이어 본인의 칩 수만을 보여줍니다.", inline=False)
+        embed.add_field(name="!addChip (칩 수)\n!addchip (칩 수)\n!add (칩 수)", value="(칩 수)만큼 칩을 추가합니다. 기본값은 100입니다.", inline=False)
+        embed.add_field(name="!가위바위보 (칩 수)\n!rps (칩 수) \n!RockPaperSissors (칩 수)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다.  칩은 1~10개 사이이며,기본값은 1입니다.", inline=False)
+        embed.add_field(name="!블랙잭 (칩 수)\n!BlackJack (칩 수)\n!blackjack (칩 수)\n!21 (칩 수)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~1000개 사이이며, 기본값은 10입니다.", inline=False)
+        embed.add_field(name="!SlotMachine (칩 수)\n!slot (칩 수)\n!슬롯머신 (칩 수)", value="칩을 걸고 슬롯머신을 가동합니다. 칩은 10~500개 사이이며, 기본값은 10입니다.", inline=False)
+        await ctx.channel.send(embed=embed)
+        return
+    elif(myung=="myProfile" or myung=="myprofile" or myung=="mydata" or myung=="me"):
+        embed=discord.Embed(title="myProfile (길이)", description="플레이어의 칩, 승패, 승률 정보를 보여줍니다. \n!myprofile !mydata !me 로도 사용할 수 있습니다.\n 명령어 뒤 (길이)에 all을 붙여 자세한 정보를 볼 수 있습니다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        await ctx.channel.send(embed=embed)
+        return
+    elif(myung=="myChip" or myung=="mychip" or myung=="chip"):
+        embed=discord.Embed(title="myChip", description="플레이어의 칩 수를 보여줍니다.\n!mychip !chip 으로도 사용할 수 있습니다.\n 칩을 한 번도 쓰지 않은 경우 100개의 chip이 생성됩니다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        await ctx.channel.send(embed=embed)
+        return
+    elif(myung=="addChip" or myung=="addchip" or myung=="add"):
+        embed=discord.Embed(title="addChip (칩 수)", description="플레이어의 칩 수를 추가합니다.\n!addchip !add 로도 사용할 수 있습니다.\n 칩의 수를 지정하지 않으면 100개가 추가되며, 음수를 넣어도 정상 동작합니다.\n이것으로 변경한 칩은 게임으로 잃거나 얻은 칩에 포함되지 않습니다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        await ctx.channel.send(embed=embed)
+        return
+    elif(myung=="RockPaperSissors" or myung=="가위바위보" or myung=="rps"):
+        embed=discord.Embed(title="RockPaperSissors (칩 수)", description="칩을 걸고 딜러와 가위바위보를 진행합니다.\n!가위바위보 !rps 로도 사용할 수 있습니다.\n 칩의 수를 지정하지 않으면 1개를 걸고 진행하며 이경우 승리시 1개를 얻고 패배시 1개를 잃습니다.\n 칩은 1~100개를 걸 수 있습니다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        await ctx.channel.send(embed=embed)
+        return
+    elif(myung=="BlackJack" or myung=="blackjack" or myung=="블랙잭" or myung=="21"):
+        embed=discord.Embed(title="BlackJack (칩 수)", description="일정량의 칩을 베팅해 그만 둘 때 까지 딜러와 블랙잭 게임을 진행합니다.\n!blackjack !블랙잭 !21 로도 사용할 수 있습니다.\n블랙잭은 카드를 뽑아 21에 가깝게 만드는 게임으로, hit으로 카드를 뽑고 stay로 중단할 수 있습니다. \n 10, J, Q, K를 모두 10으로, A를 11 혹은 1로 계산한 카드 숫자의 합이 점수이며, 점수가 21을 초과하면 상대가 승리합니다.\n\n 칩의 수를 지정하지 않으면 10개를 걸고 진행하며 이경우 일반적인 승리시 20개, 블랙잭으로 승리시 30개를 얻고 패배시 10개를 잃습니다.\n칩은 10~1000개를 걸 수 있습니다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        await ctx.channel.send(embed=embed)
+        return
+    elif(myung=="SlotMachine" or myung=="slot" or myung=="슬롯머신"):
+        embed=discord.Embed(title="SlotMachine (칩 수)", description="칩을 넣고 슬롯머신을 가동합니다.\n!슬롯머신 !slot 으로도 사용할 수 있습니다.\n슬롯머신은 3x3의 아이콘 배열 중 2행의 세 심볼을 분석합니다. 조건에 부합하면 칩을 받고, 그렇지 않으면 잃습니다.\n\n규칙은 다음과 같습니다\n :seven: - :seven: - :seven: 건 칩의 200배, :slot_machine: - :slot_machine: - :slot_machine: 건 칩의 100배\n :watermelon: - :watermelon: - :watermelon: 건 칩의 100배, :watermelon: - :watermelon: - :slot_machine: 건 칩의 100배\n :bell: - :bell: - :bell: 건 칩의 18배, :bell: - :bell: - :slot_machine: 건 칩의 18배\n :grapes: - :grapes: - :grapes: 건 칩의 14배, :grapes: - :grapes: - :slot_machine: 건 칩의 14배\n :tangerine: - :tangerine: - :grapes: 건 칩의 10배, :grapes: - :grapes: - :slot_machine: 건 칩의 10배\n:cherries: - :cherries: - :question: 건 칩의 5배, :cherries: - :question: - :question: 건 칩의 2배\n 항목에 포함되지 않으면 칩을 잃는다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        await ctx.channel.send(embed=embed)
+        return
 
 def playerchange(ctx,want,locate):
     if not os.path.isdir(chipdir):
@@ -59,7 +152,7 @@ def playerchange(ctx,want,locate):
             playerchip.writelines(chipline)
     except FileNotFoundError:
         with open(player,"w") as playerchip:
-            playerchip.write("100\n"+"0\n"*14)
+            playerchip.write("100\n"+"0\n"*17)
 
 @bot.command(aliases=["mychip","chip"])
 async def myChip(ctx):
@@ -94,6 +187,10 @@ async def RockPaperSissors(ctx,wants=1):
     with open(player+".txt","r") as playerchip:
         chipline=playerchip.readlines()
         chips=chipline[0]
+        if(wants<1 or wants>100):
+            embed = discord.Embed(title="가위바위보 RockPaperSissors",description="\n칩은 1개~100개 사이로 베팅해주세요.", color=0x00aaaa)
+            await ctx.channel.send(embed=embed)
+            return
         if(wants<1 or int(chips)-wants<0):
             answer = ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다."
             embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
@@ -301,31 +398,31 @@ async def SlotMachine(ctx,wants=10):
         resu = [slot1[num1%21],slot1[(num1+1)%21],slot1[(num1+2)%21],slot2[num2%24],slot2[(num2+1)%24],slot2[(num2+2)%24],slot3[num3%23],slot3[(num3+1)%23],slot3[(num3+2)%23]]
         if(resu[1]==resu[4] and resu[4]==resu[7]):
             if(resu[1]==":seven:"):
-                bedang = 201
+                bedang = 200-1
             elif(resu[1]==":slot_machine:"):
-                bedang = 101
+                bedang = 100-1
             elif(resu[1]==":watermelon:"):
-                bedang = 101
+                bedang = 100-1
             elif(resu[1]==":bell:"):
-                bedang = 19
+                bedang = 18-1
             elif(resu[1]==":grapes:"):
-                bedang = 14
+                bedang = 14-1
             elif(resu[1]==":tangerine:"):
-                bedang = 10
+                bedang = 10-1
         elif(resu[1]==resu[4] and resu[7]=="slot_machine"):
             if(resu[1]==":watermelon:"):
-                bedang = 101
+                bedang = 100-1
             elif(resu[1]==":bell:"):
-                bedang = 19
+                bedang = 18-1
             elif(resu[1]==":grapes:"):
-                bedang = 15
+                bedang = 14-1
             elif(resu[1]==":tangerine:"):
-                bedang = 11
+                bedang = 10-1
         elif(resu[1]==":cherries:"):
             if(resu[4]==":cherries:"):
-                bedang = 5
+                bedang = 5-1
             else:
-                bedang = 3
+                bedang = 2-1
         result = "7777777777 \n"+resu[0]+" - "+resu[3]+" - "+resu[6]+"\n"+resu[1]+" - "+resu[4]+" - "+resu[7]+" <-\n"+resu[2]+" - "+resu[5]+" - "+resu[8]+"\n7777777777 \n"
         if(bedang==201):
             winlose = "\n[ - - JACKPOT! - - ]"
