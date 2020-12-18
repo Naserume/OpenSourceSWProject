@@ -12,7 +12,8 @@
 3-2 블랙잭 기능 추가 (완료)
 3-3 승패 기록기능 추가 (완료)
 3-4 승패 출력기능 (진행중)
-3-5 추가 카지노 게임 (진행중)
+3-5 슬롯머신 (완료)
+3-6 추가 카지노 게임 (진행중)
 4. 테스트, 기록 (진행중)
 
 ## 봇 사용법
@@ -36,5 +37,6 @@ https://discord.com/api/oauth2/authorize?client_id=787596915004801024&permission
 review를 도와준 인물
 [@Dizzt](https://github.com/theDizzt)
 [@LucasKim](https://github.com/Lucas0828)
+[@ghddbsrl](https://github.com/ghddbsrl)
 
 총 2명
