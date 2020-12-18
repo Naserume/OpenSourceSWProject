@@ -21,6 +21,12 @@ https://discord.com/api/oauth2/authorize?client_id=787596915004801024&permission
 
 !help 명령어로 명령어 확인
 
+현재 기능
+
+칩 저장, 변경, 확인 기능
+가위바위보(게임이 충분히 추가되면 삭제 예정)
+룰렛(제작 예정)
+
 ## 참여 인원
 2020088895 신해소진 [@Naserume](https://github.com/Naserume)
 
