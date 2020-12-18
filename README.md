@@ -32,7 +32,8 @@ https://discord.com/api/oauth2/authorize?client_id=787596915004801024&permission
 
 총 1명
 
-## review를 도와준 인물
+## Contributers
+review를 도와준 인물
 [@Dizzt](https://github.com/theDizzt)
 [@LucasKim](https://github.com/Lucas0828)
 
