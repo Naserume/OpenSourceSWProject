@@ -39,4 +39,4 @@ review를 도와준 인물
 [@LucasKim](https://github.com/Lucas0828)
 [@ghddbsrl](https://github.com/ghddbsrl)
 
-총 2명
+총 3명
