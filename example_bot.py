@@ -161,7 +161,7 @@ async def BlackJack(ctx,wants=10):
             chipline=playerchip.readlines()
             chips=chipline[0]
             if(wants<10 or wants>1000):
-                embed = discord.Embed(title="블랙잭 Blackjack",description=answer+"\n칩은 10개~1000개 사이로 베팅해주세요.", color=0x00aaaa)
+                embed = discord.Embed(title="블랙잭 Blackjack",description="\n칩은 10개~1000개 사이로 베팅해주세요.", color=0x00aaaa)
                 await ctx.channel.send(embed=embed)
                 return
             if(wants<1 or int(chips)-wants<0):
