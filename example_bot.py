@@ -139,7 +139,8 @@ async def Help(ctx,myung="all"):
         embed=discord.Embed(title="Baccarat", description="플레이어, 뱅커(딜러) 중 어느 쪽이 이길 지, 혹은 무승부일 지 예측해 베팅하고 결과에 따라 칩을 받는 게임입니다.\n A는 1로, 10, J, Q, K를 모두 0로 계산하며, 카드의 점수 합에서 일의 자리를 비교해 더 높은 쪽이 승리합니다.\n바카라는 양측이 카드를 2장씩 뽑아 비교하며, 규칙에 따라 한장이 더 추가됩니다. \n예측에 성공하면 베팅한 칩의 두배를, tie에 베팅했으면 8배를 받으며, banker가 6으로 승리하면 1.5배를 받습니다.", color=0x00aaaa)
         embed.set_author(name="카지노 봇")
         await ctx.channel.send(embed=embed)
-
+    else:
+        await ctx.channel.send("없는 명령어입니다. !help로 명령어 목록을 확인하세요.")
 def playerchange(ctx,want,locate):
     if not os.path.isdir(chipdir):
         os.mkdir(chipdir)
