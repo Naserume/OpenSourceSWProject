@@ -187,6 +187,7 @@ async def addChip(ctx,wants=100):
 
 @bot.command(aliases=["가위바위보","rps"])
 async def RockPaperSissors(ctx,wants=1):
+    playerchange(ctx,0,0)
     senderid=ctx.author.id
     player = chipdir+"/player"+str(senderid)
     with open(player+".txt","r") as playerchip:
@@ -257,6 +258,7 @@ async def RockPaperSissors(ctx,wants=1):
 
 @bot.command(aliases=["블랙잭","blackjack","21"])
 async def BlackJack(ctx,wants=10):
+    playerchange(ctx,0,0)
     def checksame(newtext):
         return newtext.author == ctx.author and newtext.channel == channel
     senderid=ctx.author.id
@@ -375,6 +377,7 @@ async def BlackJack(ctx,wants=10):
 
 @bot.command(aliases=["슬롯머신","slot"])
 async def SlotMachine(ctx,wants=10):
+    playerchange(ctx,0,0)
     def checksame(newtext):
         return newtext.author == ctx.author and newtext.channel == channel
     senderid=ctx.author.id
@@ -478,6 +481,7 @@ async def SlotMachine(ctx,wants=10):
 
 @bot.command(aliases=["바카라","baccarat","macau","bac"])
 async def Baccarat(ctx,wants=10):
+    playerchange(ctx,0,0)
     def checksame(newtext):
         return newtext.author == ctx.author and newtext.channel == channel
     senderid=ctx.author.id
@@ -506,7 +510,7 @@ async def Baccarat(ctx,wants=10):
                 embed = discord.Embed(title="칩이 부족합니다.",description=answer, color=0x00aaaa)
                 await ctx.channel.send(embed=embed)
                 return
-            embed = discord.Embed(title="바카라",description="40초 안에 베팅할 칩의 양을 정해주세요.\n 현재 "+ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다.", color=0x00aaaa)
+            embed = discord.Embed(title="바카라",description="40초 안에 베팅할 칩의 양을 정해주세요.\n 현재 "+ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 이며 최소 베팅은 1, 최대 베팅은 1000입니다.", color=0x00aaaa)
             msg1 =await ctx.channel.send(embed=embed)
             try:
                 while True:
