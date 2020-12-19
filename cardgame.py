@@ -43,6 +43,18 @@ def count_score(cards):
         score = 0
     return score
 
+def count_baccarat(cards):
+    score = 0
+    for card in cards:
+        rank = card[1]
+        if rank == 'A':
+            score = score + 1
+        elif rank in {'J', 'Q', 'K'}:
+            score = score
+        else:
+            score += rank
+    return score%10
+
 def show_cards(cards, message):
     for card in cards:
         message = message + '\n' + str(card[0]) + ' '+ str(card[1])
