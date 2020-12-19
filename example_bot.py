@@ -99,9 +99,10 @@ async def Help(ctx,myung="all"):
         embed.add_field(name="!myProfile\n!myprofile\n!mydata\n!me", value="플레이어 본인의 정보를 보여줍니다.", inline=False)
         embed.add_field(name="!myChip\n!mychip\n!chip", value="플레이어 본인의 칩 수만을 보여줍니다.", inline=False)
         embed.add_field(name="!addChip (칩 수)\n!addchip (칩 수)\n!add (칩 수)", value="(칩 수)만큼 칩을 추가합니다. 기본값은 100입니다.", inline=False)
-        embed.add_field(name="!가위바위보 (칩 수)\n!rps (칩 수) \n!RockPaperSissors (칩 수)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다.  칩은 1~10개 사이이며,기본값은 1입니다.", inline=False)
-        embed.add_field(name="!블랙잭 (칩 수)\n!BlackJack (칩 수)\n!blackjack (칩 수)\n!21 (칩 수)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~1000개 사이이며, 기본값은 10입니다.", inline=False)
+        embed.add_field(name="!RockPaperSissors (칩 수)\n!rps (칩 수) \n!가위바위보 (칩 수)", value="테스트용 게임. 칩을 걸고 가위바위보를 합니다.  칩은 1~10개 사이이며,기본값은 1입니다.", inline=False)
+        embed.add_field(name="!BlackJack (칩 수)\n!블랙잭 (칩 수)\n!blackjack (칩 수)\n!21 (칩 수)", value="칩을 걸고 블랙잭 게임을 진행합니다. 칩은 10~1000개 사이이며, 기본값은 10입니다.", inline=False)
         embed.add_field(name="!SlotMachine (칩 수)\n!slot (칩 수)\n!슬롯머신 (칩 수)", value="칩을 걸고 슬롯머신을 가동합니다. 칩은 10~500개 사이이며, 기본값은 10입니다.", inline=False)
+        embed.add_field(name="!Baccarat \n!바카라 \n!baccarat \n!bac \n!macau ", value="바카라 게임을 진행합니다", inline=False)
         await ctx.channel.send(embed=embed)
         return
     elif(myung=="myProfile" or myung=="myprofile" or myung=="mydata" or myung=="me"):
@@ -134,6 +135,10 @@ async def Help(ctx,myung="all"):
         embed.set_author(name="카지노 봇")
         await ctx.channel.send(embed=embed)
         return
+    elif(myung=="바카라" or myung=="Baccarat" or myung=="baccarat" or myung=="bac" or myung=="macau"):
+        embed=discord.Embed(title="Baccarat", description="플레이어, 뱅커(딜러) 중 어느 쪽이 이길 지, 혹은 무승부일 지 예측해 베팅하고 결과에 따라 칩을 받는 게임입니다.\n A는 1로, 10, J, Q, K를 모두 0로 계산하며, 카드의 점수 합에서 일의 자리를 비교해 더 높은 쪽이 승리합니다.\n바카라는 양측이 카드를 2장씩 뽑아 비교하며, 규칙에 따라 한장이 더 추가됩니다. \n예측에 성공하면 베팅한 칩의 두배를, tie에 베팅했으면 8배를 받으며, banker가 6으로 승리하면 1.5배를 받습니다.", color=0x00aaaa)
+        embed.set_author(name="카지노 봇")
+        await ctx.channel.send(embed=embed)
 
 def playerchange(ctx,want,locate):
     if not os.path.isdir(chipdir):
@@ -469,6 +474,148 @@ async def SlotMachine(ctx,wants=10):
                 embed = discord.Embed(title="칩이 부족합니다.",description=answer+"\n칩은 음수가 될 수 없습니다.", color=0x00aaaa)
                 await ctx.channel.send(embed=embed)
                 return
+    return
+
+@bot.command(aliases=["바카라","baccarat","macau","bac"])
+async def Baccarat(ctx,wants=10):
+    def checksame(newtext):
+        return newtext.author == ctx.author and newtext.channel == channel
+    senderid=ctx.author.id
+    sendername = chipdir+"/player"+str(senderid)
+    channel = ctx.channel
+    deck = fresh_deck()
+    while True:
+        embed = discord.Embed(title="바카라",description="40초 안에 banker, player, tie 중 베팅할 곳을 선택 해주세요. ", color=0x00aaaa)
+        msg1 =await ctx.channel.send(embed=embed)
+        try:
+            msg2 = await bot.wait_for('message', timeout=40.0, check=checksame)
+            while(msg2.content!="banker" and msg2.content!="player" and msg2.content!="tie"):
+                await ctx.channel.send(" banker, player, tie 중 베팅할 곳을 선택 해주세요.")
+                msg2 = await bot.wait_for('message', timeout=40.0, check=checksame)
+            mypick = msg2.content
+        except asyncio.TimeoutError:
+            await msg1.delete()
+            embed = discord.Embed(title="Baccarat",description="40초가 다 지나 항복으로 간주합니다.", color=0x00aaaa)
+            await ctx.channel.send(embed=embed)
+            return  
+        with open(sendername+".txt","r+") as playerchip:
+            chipline=playerchip.readlines()
+            chips=chipline[0]
+            if int(chips)<=0 :
+                answer = ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다."
+                embed = discord.Embed(title="칩이 부족합니다.",description=answer, color=0x00aaaa)
+                await ctx.channel.send(embed=embed)
+                return
+            embed = discord.Embed(title="바카라",description="40초 안에 베팅할 칩의 양을 정해주세요.\n 현재 "+ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다.", color=0x00aaaa)
+            msg1 =await ctx.channel.send(embed=embed)
+            try:
+                while True:
+                    await ctx.channel.send("베팅할 칩의 양을 제대로 정해주세요. 양수가 아니거나, 칩이 부족하면 실행할 수 없습니다.")
+                    msg2 = await bot.wait_for('message', timeout=40.0, check=checksame)
+                    try:
+                        wants = int(msg2.content)
+                        if(wants>=1 and wants<=1000 and int(chips)-wants>=0):
+                            break
+                    except:
+                        pass
+            except asyncio.TimeoutError:
+                await msg1.delete()
+                embed = discord.Embed(title="블랙잭",description="40초가 다 지나 게임을 종료합니다.", color=0x00aaaa)
+                await ctx.channel.send(embed=embed)
+                return
+        dealer = []
+        player = []
+        card, deck = hit(deck)
+        player.append(card)
+        card, deck = hit(deck)
+        dealer.append(card)
+        card, deck = hit(deck)
+        player.append(card)
+        card, deck = hit(deck)
+        dealer.append(card)
+        senderid=ctx.author.id
+        channel = ctx.channel
+        score_dealer = count_baccarat(dealer)
+        score_player = count_baccarat(player)
+        if score_player>=8 or score_dealer>=8:
+            pass
+        elif score_player>=6:
+            if score_dealer<=5:
+                card, deck = hit(deck)
+                dealer.append(card)
+        else:
+            card, deck = hit(deck)
+            player.append(card)
+            if player[2][1]==2 or player[2][1]==3:
+                if score_dealer <=4:
+                    card, deck = hit(deck)
+                    dealer.append(card)
+            elif player[2][1]==4 or player[2][1]==5:
+                if score_dealer <=5:
+                    card, deck = hit(deck)
+                    dealer.append(card)
+            elif player[2][1]==6 or player[2][1]==7:
+                if score_dealer <=6:
+                    card, deck = hit(deck)
+                    dealer.append(card)
+            elif player[2][1]==8:
+                if score_dealer <=2:
+                    card, deck = hit(deck)
+                    dealer.append(card)
+            else: #A 9 10 J Q K
+                if score_dealer <=3:
+                    card, deck = hit(deck)
+                    dealer.append(card)
+        dealstr2 = show_cards(dealer, "딜러인 저의 덱은 ")
+        playstr2 = show_cards(player,f"{ctx.message.author.mention}님의 덱은")
+        answer = dealstr2+'\n\n'+playstr2+f"\n\n{ctx.message.author.mention}님은 승자 예측을 다음과 같이 하셨습니다:\n"+mypick+'\n\n'
+        await msg1.delete()
+        if score_dealer == score_player:
+            answer = answer + "비겼습니다. "
+            win="tie"
+            bedang=8
+        elif score_dealer < score_player:
+            answer = answer + "플레이어의 승입니다. "
+            win="player"
+            bedang=1
+        else:
+            answer = answer + "딜러의 승입니다. "
+            win="banker"
+            bedang=1
+        if mypick==win:
+            if(win=="dealer" and score_dealer==6):
+                playerchange(ctx,wants//2,0)
+                playerchange(ctx,wants//2,1)
+                
+            else:
+                playerchange(ctx,bedang*wants,0)
+                playerchange(ctx,bedang*wants,1)
+            result=0
+            answer = answer + "예측에 성공하셨습니다!"
+        else:
+            answer = answer + "예측에 실패하셨습니다."
+            playerchange(ctx,-wants,0)
+            playerchange(ctx,wants,2)
+            result=2
+        playerchange(ctx,1,result+3)
+        playerchange(ctx,1,result+15)
+        with open(sendername+".txt","r") as playerchip:
+            chipline=playerchip.readlines()
+            chips=chipline[0]
+        embed = discord.Embed(title="바카라",description=answer+'\n'+ctx.author.name+"씨의 칩은 "+chips.rstrip('\n')+"개 입니다. \n\n 다시 하시고 싶으시면 Y(혹은 y)를, 아니면 N(혹은 n)을 입력해주세요.", color=0x00aaaa)
+        embed.set_footer(text="40초 안에 입력하시지 않으면 자동으로 종료 처리됩니다.")
+        msg1 = await ctx.channel.send(embed=embed)
+        try:
+            msg2 = await bot.wait_for('message', timeout=40.0, check=checksame)
+            while(msg2.content!="Y" and msg2.content!="N" and msg2.content!="y" and msg2.content!="n"):
+                await ctx.channel.send("다시 하시고 싶으시면 Y(혹은 y)를, 아니면 N(혹은 n)을 입력해주세요.")
+                msg2 = await bot.wait_for('message', timeout=40.0, check=checksame)
+        except asyncio.TimeoutError:
+            embed = discord.Embed(title="바카라",description="40초가 다 지나 게임을 종료합니다.", color=0x00aaaa)
+            await ctx.channel.send(embed=embed)
+            return
+        if msg2.content=="N" or msg2.content=="n":
+            break
     return
 
 bot.run('my token')
