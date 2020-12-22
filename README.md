@@ -1,5 +1,7 @@
 # OpenSourceSWProject
 
+(22일 1시~5시 사이 봇이 동작하지 않습니다!)
+
 ## 프로잭트 개요
 ~~[Pixelorama](https://github.com/Orama-Interactive/Pixelorama)에서 번역이 미흡한 일본어를 100% 번역할 것~~
 디스코드용 카지노 봇 제작
